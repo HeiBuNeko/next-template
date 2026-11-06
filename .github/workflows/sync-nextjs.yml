@@ -1,9 +1,9 @@
 
-name: Sync create-next-app
+name: Sync Next.js
 
 on:
   schedule:
-    - cron: "0 10 * * *"
+    - cron: "0 10 * * 0"
       timezone: "Asia/Shanghai"
   workflow_dispatch:
 
@@ -12,7 +12,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: sync-create-next-app
+  group: sync-nextjs
   cancel-in-progress: false
 
 jobs:
@@ -23,18 +23,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Install pnpm
+      - name: Setup pnpm
         uses: pnpm/action-setup@v6
         with:
           version: latest
 
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
           node-version: lts/*
           cache: pnpm
 
-      - name: Generate latest create-next-app
+      - name: Generate latest Next.js
         shell: bash
         run: |
           set -euo pipefail
@@ -71,7 +71,7 @@ jobs:
             执行命令：
 
             ```bash
-            pnpm create next-app@latest --biome --use-pnpm
+            pnpm create next-app@latest --biome
             ```
 
             同步范围：
