@@ -1,0 +1,87 @@
+
+name: Sync create-next-app
+
+on:
+  schedule:
+    - cron: "0 10 * * *"
+      timezone: "Asia/Shanghai"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-create-next-app
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: latest
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - name: Generate latest create-next-app
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tmp_dir="$(mktemp -d)"
+          scaffold="$tmp_dir/next-template"
+
+          pnpm create next-app@latest "$scaffold" \
+            --biome \
+
+          # 完整同步官方脚手架
+          # 保留当前仓库的 GitHub Actions 工作流
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='.github/workflows/' \
+            --exclude='node_modules/' \
+            --exclude='.next/' \
+            "$scaffold/" "$GITHUB_WORKSPACE/"
+
+          rm -rf "$tmp_dir"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: chore/sync-create-next-app
+          delete-branch: true
+          commit-message: "chore: sync create-next-app@latest --biome"
+          title: "chore: sync create-next-app@latest --biome"
+          body: |
+            ## Sync create-next-app
+
+            自动同步最新官方 Next.js 脚手架。
+
+            执行命令：
+
+            ```bash
+            pnpm create next-app@latest --biome --use-pnpm
+            ```
+
+            同步范围：
+            - 完整项目文件
+            - package.json
+            - pnpm-lock.yaml
+            - 官方配置文件
+            - 示例页面及资源
+
+            保留：
+            - .github/workflows/
+
+            请检查依赖变化、构建结果和配置变更后再合并。

@@ -7,13 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
-    "format": "biome format --write",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,css}": [
-      "biome check --files-ignore-unknown=true"
-    ]
+    "format": "biome format --write"
   },
   "dependencies": {
     "next": "16.4.5",
@@ -26,9 +20,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "cross-env": "^10.1.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^17.6.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
