@@ -25,8 +25,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
-        with:
-          version: latest
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -59,12 +57,12 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:
-          branch: chore/sync-create-next-app
+          branch: chore/sync-nextjs
           delete-branch: true
           commit-message: "chore: sync create-next-app@latest --biome"
           title: "chore: sync create-next-app@latest --biome"
           body: |
-            ## Sync create-next-app
+            ## Sync Next.js
 
             自动同步最新官方 Next.js 脚手架。
 
