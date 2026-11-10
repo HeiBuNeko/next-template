@@ -37,22 +37,19 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Generate the latest official Next.js project
           tmp_dir="$(mktemp -d)"
-          scaffold="$tmp_dir/next-template"
-
-          pnpm create next-app@latest "$scaffold" \
+          cd "$tmp_dir"
+          pnpm create next-app@latest next-template \
             --biome \
 
-          # 完整同步官方脚手架
-          # 保留当前仓库的 GitHub Actions 工作流
+          # Sync the generated project into the repository root
           rsync -a --delete \
             --exclude='.git/' \
             --exclude='.github/workflows/' \
             --exclude='node_modules/' \
             --exclude='.next/' \
-            "$scaffold/" "$GITHUB_WORKSPACE/"
-
-          rm -rf "$tmp_dir"
+            "$tmp_dir/next-template/" "$GITHUB_WORKSPACE/"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
